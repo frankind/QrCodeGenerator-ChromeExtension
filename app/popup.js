@@ -36,17 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     printText(url);
     document.getElementById('left').addEventListener('click', handleLeftClick);
-    // document.getElementById('right').addEventListener('click', handleRightClick);
-    document.getElementById('right').addEventListener('click', handleClick);
-    // document.getElementById('right').addEventListener('click'
-    // , function() {
-    // printText('RIGHT: ' + currentUrl);
-    // printText(
-    //   [...document.getElementsByTagName('a')].filter(function(data) {
-    //     return data.textContent.indexOf('Next') !== -1;
-    //   })[0].textContent
-    // );
-    // });
+    document.getElementById('right').addEventListener('click', handleRightClick);
     // creates the QR code
     qrcode.makeCode(url);
     mainTask();
@@ -57,6 +47,25 @@ function updateUrl(tabId, targetUrl) {
   chrome.tabs.update(tabId, { url: targetUrl, active: true });
 }
 function handleLeftClick() {
+  if (currentWeb === MANGAPARKWEB) mangaparkPrevClick();
+  else if (currentWeb === NICEOPPAIWEB) niceoppaiPrevChapter();
+}
+
+function handleRightClick() {
+  if (currentWeb === MANGAPARKWEB) mangaparkNextClick();
+  else if (currentWeb === NICEOPPAIWEB) niceoppaiNextChapter();
+}
+
+function getCodeClick(tag, text) {
+  return `[...document.getElementsByTagName("${tag}")].filter(function(data){return (data.textContent.indexOf("${text}")!==-1)})[0].click();`;
+}
+function getCodePreviousChapter() {
+  return `[...document.getElementsByTagName("cbo_wpm_chp")].filter(function(data){return (data.textContent.indexOf("${text}")!==-1)})[0].click();`;
+}
+function niceoppaiPrevChapter() {
+
+}
+function mangaparkPrevClick() {
   chrome.tabs.executeScript(
     tabId,
     {
@@ -69,8 +78,7 @@ function handleLeftClick() {
     }
   );
 }
-
-function handleRightClick() {
+function mangaparkNextClick() {
   chrome.tabs.executeScript(
     tabId,
     {
@@ -82,10 +90,6 @@ function handleRightClick() {
       printText('RIGHT is clicked');
     }
   );
-}
-
-function getCodeClick(tag, text) {
-  return `[...document.getElementsByTagName("${tag}")].filter(function(data){return (data.textContent.indexOf("${text}")!==-1)})[0].click();`;
 }
 // function handleLeftClick() {
 //   printText('LEFT: ' + currentUrl);
@@ -118,7 +122,7 @@ function mainTask() {
     currentWeb = NICEOPPAIWEB;
     printText('found niceoppai');
     if (currentUrl.indexOf('?all') === -1) {
-      targetUrl = currentUrl + '?all';
+      targetUrl = currentUrl + '/?all';
       updateUrl(tabId, targetUrl);
     }
   } else if (isFoundWeb(currentUrl, MANGAPARKWEB)) {
