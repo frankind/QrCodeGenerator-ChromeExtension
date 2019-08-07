@@ -1,15 +1,19 @@
 {
   "manifest_version": 2,
 
-  "name": "QR generator for Chrome",
-  "description": "This extension generates a QR code for the current page",
+  "name": "Manga Full page",
+  "description": "Always show full page",
   "version": "1.0",
 
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup": "popup.html",
-    "default_title": "generate QR code"
+    "default_title": "Always show full pag"
   },
 
-  "permissions": ["activeTab", "tabs"]
+  "permissions": ["activeTab", "tabs", "storage", "declarativeContent"],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  }
 }

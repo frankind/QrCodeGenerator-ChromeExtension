@@ -4,6 +4,21 @@ let currentUrl = '';
 const NICEOPPAIWEB = 'niceoppai.net';
 const MANGAPARKWEB = 'mangapark.net';
 let currentWeb = '';
+
+function handleButton() {
+  let changeColor = document.getElementById('changeColor');
+  chrome.storage.sync.get('color', function(data) {
+    changeColor.style.backgroundColor = data.color;
+    changeColor.setAttribute('value', data.color);
+  });
+  changeColor.onclick = function(element) {
+    let color = element.target.value;
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+      chrome.tabs.executeScript(tabs[0].id, { code: 'document.body.style.backgroundColor = "' + color + '";' });
+    });
+  };
+}
+
 // Get the current URL.
 // @param {function(string)} callback - called when the URL of the current tab is found
 function getCurrentTabUrl(callback) {
@@ -63,7 +78,52 @@ function getCodePreviousChapter() {
   return `[...document.getElementsByTagName("cbo_wpm_chp")].filter(function(data){return (data.textContent.indexOf("${text}")!==-1)})[0].click();`;
 }
 function niceoppaiPrevChapter() {
-
+  printText(`action left yet: ${currentUrl}`);
+  // let previousChapter;
+  function prevChapter() {
+    let currentUrl = document.URL
+    let targetUrl = currentUrl;
+    let select = document.querySelector('.cbo_wpm_chp');
+    let currentIndex = select.options[select.selectedIndex].value;
+    let prevIndex = select.options[select.selectedIndex + 1].value;
+    // previousChapter = prevIndex;
+    function goToPreviousChapter() {
+      // replace current chapter
+      targetUrl = currentUrl.replace(currentIndex, prevIndex);
+      if (currentUrl.indexOf('?all') === -1) {
+        targetUrl = targetUrl + '?all'
+      }
+      location.replace(targetUrl)
+    }
+    goToPreviousChapter();
+  }
+  chrome.tabs.executeScript({
+    code: '(' + prevChapter + ')();',
+  });
+}
+function niceoppaiNextChapter() {
+  printText(`action right yet: ${currentUrl}`);
+  // let previousChapter;
+  function nextChapter() {
+    let currentUrl = document.URL
+    let targetUrl = currentUrl;
+    let select = document.querySelector('.cbo_wpm_chp');
+    let currentIndex = select.options[select.selectedIndex].value;
+    let nextIndex = select.options[select.selectedIndex - 1].value;
+    // previousChapter = prevIndex;
+    function goToNextChapter() {
+      // replace current chapter
+      targetUrl = currentUrl.replace(currentIndex, nextIndex);
+      if (currentUrl.indexOf('?all') === -1) {
+        targetUrl = targetUrl + '?all'
+      }
+      location.replace(targetUrl)
+    }
+    goToNextChapter();
+  }
+  chrome.tabs.executeScript({
+    code: '(' + nextChapter + ')();',
+  });
 }
 function mangaparkPrevClick() {
   chrome.tabs.executeScript(
@@ -118,6 +178,7 @@ function mangaparkNextClick() {
 function mainTask() {
   // Check Niceoppai Web
   let targetUrl;
+  handleButton();
   if (isFoundWeb(currentUrl, NICEOPPAIWEB)) {
     currentWeb = NICEOPPAIWEB;
     printText('found niceoppai');
@@ -132,6 +193,9 @@ function mainTask() {
       targetUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/1'));
       updateUrl(tabId, targetUrl);
     }
+  } else if (isFoundWeb(currentUrl, SWITCHXCI)) {
+    printText('found switchXCI');
+    removeSwitchXCIWarning();
   } else {
     printText('not found match');
   }
