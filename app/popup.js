@@ -151,30 +151,22 @@ function mangaparkNextClick() {
     }
   );
 }
-// function handleLeftClick() {
-//   printText('LEFT: ' + currentUrl);
-// const elList = searchElementByTagText('a', 'Prev');
-// if (elList.length > 0) {
-//   printText('Clicking: ' + elList[0].textContent);
-//   elList[0].click();
-// }
-// }
-// function handleRightClick() {
-//   printText('RIGHT: ' + currentUrl);
-//   [...document.getElementsByTagName('a')]
-//     .filter(function(data) {
-//       return data.textContent.indexOf('Next') !== -1;
-//     })[0]
-//     .click();
-//   // const elList = searchElementByTagText('a', 'Next');
-//   // // printText('size: ' + elList.length);
-//   // if (elList.length > 0) {
-//   //   const ele = elList[0];
-//   //   printText('Clicking: ' + ele.textContent);
-//   //   ele.click();
-//   // }
-// }
-
+function removeNiceOppaiAds() {
+  printText(`Remove ads: ${currentUrl}`);
+  // let previousChapter;
+  function removeAds() {
+    function doRemoveAds() {
+      let elementList = document.querySelectorAll('.textwidget')
+      Array.prototype.forEach.call( elementList, function( node ) {
+        node.parentNode.removeChild( node );
+    });
+    }
+    doRemoveAds();
+  }
+  chrome.tabs.executeScript({
+    code: '(' + removeAds + ')();',
+  });
+}
 function mainTask() {
   // Check Niceoppai Web
   let targetUrl;
@@ -182,6 +174,7 @@ function mainTask() {
   if (isFoundWeb(currentUrl, NICEOPPAIWEB)) {
     currentWeb = NICEOPPAIWEB;
     printText('found niceoppai');
+    // removeNiceOppaiAds()
     if (currentUrl.indexOf('?all') === -1) {
       targetUrl = currentUrl + '/?all';
       updateUrl(tabId, targetUrl);

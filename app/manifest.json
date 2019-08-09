@@ -15,5 +15,11 @@
   "background": {
     "scripts": ["background.js"],
     "persistent": false
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://www.niceoppai.net/*"],
+      "js": ["manageNiceOppai.js"]
+    }
+  ]
 }
