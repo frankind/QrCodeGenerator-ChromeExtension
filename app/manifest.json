@@ -24,9 +24,11 @@
     {
       "matches": ["https://www.kingsmanga.net/*"],
       "js": ["manageKingsmanga.js"]
-    },{
+    },
+    {
       "matches": ["https://mangapark.net/*"],
       "js": ["manageMangaPark.js"]
     }
-  ]
+  ],
+  "web_accessible_resources": ["kingLeft.js"]
 }

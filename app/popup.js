@@ -3,6 +3,7 @@ let tabId = -1;
 let currentUrl = '';
 const NICEOPPAIWEB = 'niceoppai.net';
 const MANGAPARKWEB = 'mangapark.net';
+const KINGMANGAWEB = 'kingsmanga.net';
 let currentWeb = '';
 
 function handleButton() {
@@ -62,13 +63,15 @@ function updateUrl(tabId, targetUrl) {
   chrome.tabs.update(tabId, { url: targetUrl, active: true });
 }
 function handleLeftClick() {
-  if (currentWeb === MANGAPARKWEB) mangaparkPrevClick();
-  else if (currentWeb === NICEOPPAIWEB) niceoppaiPrevChapter();
+  if (currentWeb.indexOf(MANGAPARKWEB) !== -1) mangaparkPrevClick();
+  else if (currentWeb.indexOf(NICEOPPAIWEB) !== -1) niceoppaiPrevChapter();
+  else if (currentWeb.indexOf(KINGMANGAWEB) !== -1) kingmangaPrevChapter();
 }
 
 function handleRightClick() {
-  if (currentWeb === MANGAPARKWEB) mangaparkNextClick();
-  else if (currentWeb === NICEOPPAIWEB) niceoppaiNextChapter();
+  if (currentWeb.indexOf(MANGAPARKWEB) !== -1) mangaparkNextClick();
+  else if (currentWeb.indexOf(NICEOPPAIWEB) !== -1) niceoppaiNextChapter();
+  else if (currentWeb.indexOf(KINGMANGAWEB) !== -1) kingmangaNextChapter();
 }
 
 function getCodeClick(tag, text) {
@@ -77,11 +80,19 @@ function getCodeClick(tag, text) {
 function getCodePreviousChapter() {
   return `[...document.getElementsByTagName("cbo_wpm_chp")].filter(function(data){return (data.textContent.indexOf("${text}")!==-1)})[0].click();`;
 }
+function kingmangaPrevChapter() {
+  printText(`kingmnagePrev clicked`);
+  chrome.tabs.executeScript(tabId, { file: 'kingLeft.js' });
+}
+function kingmangaNextChapter() {
+  printText(`kingmnageNext clicked`);
+  chrome.tabs.executeScript(tabId, { file: 'kingRight.js' });
+}
 function niceoppaiPrevChapter() {
   printText(`action left yet: ${currentUrl}`);
   // let previousChapter;
   function prevChapter() {
-    let currentUrl = document.URL
+    let currentUrl = document.URL;
     let targetUrl = currentUrl;
     let select = document.querySelector('.cbo_wpm_chp');
     let currentIndex = select.options[select.selectedIndex].value;
@@ -91,9 +102,9 @@ function niceoppaiPrevChapter() {
       // replace current chapter
       targetUrl = currentUrl.replace(currentIndex, prevIndex);
       if (currentUrl.indexOf('?all') === -1) {
-        targetUrl = targetUrl + '?all'
+        targetUrl = targetUrl + '?all';
       }
-      location.replace(targetUrl)
+      location.replace(targetUrl);
     }
     goToPreviousChapter();
   }
@@ -105,7 +116,7 @@ function niceoppaiNextChapter() {
   printText(`action right yet: ${currentUrl}`);
   // let previousChapter;
   function nextChapter() {
-    let currentUrl = document.URL
+    let currentUrl = document.URL;
     let targetUrl = currentUrl;
     let select = document.querySelector('.cbo_wpm_chp');
     let currentIndex = select.options[select.selectedIndex].value;
@@ -115,9 +126,9 @@ function niceoppaiNextChapter() {
       // replace current chapter
       targetUrl = currentUrl.replace(currentIndex, nextIndex);
       if (currentUrl.indexOf('?all') === -1) {
-        targetUrl = targetUrl + '?all'
+        targetUrl = targetUrl + '?all';
       }
-      location.replace(targetUrl)
+      location.replace(targetUrl);
     }
     goToNextChapter();
   }
@@ -156,10 +167,10 @@ function removeNiceOppaiAds() {
   // let previousChapter;
   function removeAds() {
     function doRemoveAds() {
-      let elementList = document.querySelectorAll('.textwidget')
-      Array.prototype.forEach.call( elementList, function( node ) {
-        node.parentNode.removeChild( node );
-    });
+      let elementList = document.querySelectorAll('.textwidget');
+      Array.prototype.forEach.call(elementList, function(node) {
+        node.parentNode.removeChild(node);
+      });
     }
     doRemoveAds();
   }
@@ -186,6 +197,8 @@ function mainTask() {
       targetUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/1'));
       updateUrl(tabId, targetUrl);
     }
+  } else if (isFoundWeb(currentUrl, KINGMANGAWEB)) {
+    currentWeb = KINGMANGAWEB;
   } else {
     printText('not found match');
   }
