@@ -20,6 +20,10 @@
     {
       "matches": ["http://www.niceoppai.net/*"],
       "js": ["manageNiceOppai.js"]
+    },
+    {
+      "matches": ["https://www.kingsmanga.net/*"],
+      "js": ["manageKingsmanga.js"]
     }
   ]
 }
