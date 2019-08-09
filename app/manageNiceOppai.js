@@ -13,7 +13,7 @@ const rightAds = '#sct_col_r';
 //   // });
 // }
 function isUsableParam(x) {
-  return x !== null && x !== undefined
+  return x !== null && x !== undefined;
 }
 function removeAds(elname) {
   let element = document.querySelector(elname);
@@ -27,13 +27,15 @@ function removeAds(elname) {
 function showAllPage() {
   console.log('showAllPage');
   let currentUrl = location.href;
-  if (!currentUrl.endsWith('niceoppai.net') && currentUrl.indexOf('?all') === -1) {
-    let addAll = '?all';
-    if (!currentUrl.endsWith('/')) {
-      addAll = '/' + addAll;
+  if (!currentUrl.endsWith('niceoppai.net')) {
+    if (currentUrl.indexOf('?all') === -1) {
+      let addAll = '?all';
+      if (!currentUrl.endsWith('/')) {
+        addAll = '/' + addAll;
+      }
+      console.log('Doing set all');
+      location.replace(currentUrl + addAll);
     }
-    console.log('Doing set all');
-    location.replace(currentUrl + addAll);
   } else {
     console.log('Not Doing set all');
   }

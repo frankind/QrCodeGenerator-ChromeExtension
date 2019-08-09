@@ -186,9 +186,6 @@ function mainTask() {
       targetUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/1'));
       updateUrl(tabId, targetUrl);
     }
-  } else if (isFoundWeb(currentUrl, SWITCHXCI)) {
-    printText('found switchXCI');
-    removeSwitchXCIWarning();
   } else {
     printText('not found match');
   }
